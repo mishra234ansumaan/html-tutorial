@@ -1,0 +1,28 @@
+*{
+    text-align: center;
+    color:(#af95e2);
+    font-weight: 600;
+}
+ol li{
+    text-align: center;
+    list-style-position: inside;
+    font-weight: 700;
+}
+ul li{
+    font-weight:400 ;
+}
+.centered-table{
+    text-align: center;
+}
+caption{
+    font-weight: 600;
+    text-decoration: underline;
+}
+body{
+     background-color:rgba(248, 242, 242, 0.5);
+    background-image: url(photoo.jpg);
+    background-size:contain;
+    background-position:center;
+    background-attachment: fixed;
+    background-blend-mode:screen;
+}

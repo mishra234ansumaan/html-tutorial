@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Modern Calculator with History and Theme Toggle</title>
+<style>
+  :root {
+    --light-bg: #f0f0f0;
+    --light-display-bg: #fff;
+    --light-button-bg: #e0e0e0;
+    --light-text: #1a1a1a;
+    --light-accent: #1976d2;
+
+    --dark-bg: #121212;
+    --dark-display-bg: #1e1e1e;
+    --dark-button-bg: #2a2a2a;
+    --dark-text: #eeeeee;
+    --dark-accent: #bb86fc;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-bg);
+    color: var(--light-text);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 2rem;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  body.dark {
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+  }
+
+  .calculator {
+    background-color: var(--light-display-bg);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+    width: 350px;
+    overflow: hidden;
+    transition: background-color 0.3s;
+  }
+  body.dark .calculator {
+    background-color: var(--dark-display-bg);
+  }
+
+  .display {
+    padding: 1rem 1.5rem;
+    font-size: 2.4rem;
+    background-color: var(--light-display-bg);
+    border-bottom: 1px solid #ccc;
+    word-wrap: break-word;
+    min-height: 3.5rem;
+    text-align: right;
+  }
+  body.dark .display {
+    background-color: var(--dark-display-bg);
+    border-color: #333;
+  }
+
+  .history {
+    font-size: 0.9rem;
+    color: #666;
+    min-height: 2.5rem;
+    padding: 0 1.5rem;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+  body.dark .history {
+    color: #999;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding: 1rem 1.5rem 1.5rem;
+  }
+
+  button {
+    background-color: var(--light-button-bg);
+    border: none;
+    border-radius: 10px;
+    font-size: 1.6rem;
+    padding: 1rem;
+    cursor: pointer;
+    color: var(--light-text);
+    transition: background-color 0.2s, color 0.2s, transform 0.1s;
+  }
+  body.dark button {
+    background-color: var(--dark-button-bg);
+    color: var(--dark-text);
+  }
+
+  button:active {
+    transform: scale(0.95);
+  }
+
+  .operator {
+    color: var(--light-accent);
+    font-weight: bold;
+  }
+  body.dark .operator {
+    color: var(--dark-accent);
+  }
+
+  .equal {
+    grid-column: span 2;
+    background-color: var(--light-accent);
+    color: white;
+  }
+  body.dark .equal {
+    background-color: var(--dark-accent);
+    color: #121212;
+  }
+
+  .zero {
+    grid-column: span 2;
+  }
+
+  .theme-toggle {
+    margin: 1rem auto 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .theme-toggle button {
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    background-color: var(--light-accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .theme-toggle button:hover {
+    background-color: #135ba3;
+  }
+  body.dark .theme-toggle button {
+    background-color: var(--dark-accent);
+    color: var(--dark-bg);
+  }
+  body.dark .theme-toggle button:hover {
+    background-color: #9258ff;
+  }
+</style>
+</head>
+<body>
+  <div class="calculator" role="region" aria-label="Calculator">
+    <div class="history" id="history" aria-live="polite" aria-atomic="true"></div>
+    <div class="display" id="display" aria-live="polite" aria-atomic="true">0</div>
+    <div class="buttons">
+      <button type="button" class="operator" data-value="AC" aria-label="Clear all">AC</button>
+      <button type="button" class="operator" data-value="DEL" aria-label="Delete last">DEL</button>
+      <button type="button" class="operator" data-value="%" aria-label="Percentage">%</button>
+      <button type="button" class="operator" data-value="/" aria-label="Divide">÷</button>
+
+      <button type="button" data-value="7">7</button>
+      <button type="button" data-value="8">8</button>
+      <button type="button" data-value="9">9</button>
+      <button type="button" class="operator" data-value="*" aria-label="Multiply">×</button>
+
+      <button type="button" data-value="4">4</button>
+      <button type="button" data-value="5">5</button>
+      <button type="button" data-value="6">6</button>
+      <button type="button" class="operator" data-value="-" aria-label="Minus">−</button>
+
+      <button type="button" data-value="1">1</button>
+      <button type="button" data-value="2">2</button>
+      <button type="button" data-value="3">3</button>
+      <button type="button" class="operator" data-value="+" aria-label="Plus">+</button>
+
+      <button type="button" data-value="0" class="zero">0</button>
+      <button type="button" data-value=".">.</button>
+      <button type="button" class="equal" data-value="=">=</button>
+    </div>
+    <div class="theme-toggle">
+      <button id="toggleThemeBtn" aria-label="Toggle dark and light theme">Toggle Dark/Light Theme</button>
+    </div>
+  </div>
+
+<script>
+  const display = document.getElementById('display');
+  const historyEl = document.getElementById('history');
+  const buttons = document.querySelectorAll('button[data-value]');
+  const themeBtn = document.getElementById('toggleThemeBtn');
+
+  let currentInput = '0';
+  let calculationHistory = [];
+  const maxHistory = 5;
+
+  function updateDisplay() {
+    display.textContent = currentInput;
+  }
+
+  function updateHistory() {
+    historyEl.textContent = calculationHistory.slice(-maxHistory).join(' | ');
+  }
+
+  function isOperator(char) {
+    return ['+', '-', '*', '/', '%'].includes(char);
+  }
+
+  function lastCharIsOperator() {
+    return isOperator(currentInput.slice(-1));
+  }
+
+  function sanitizeInput(input) {
+    // Remove invalid characters and handle consecutive operators
+    let sanitized = input.replace(/[^0-9.+\-*/%]/g, '');
+    return sanitized;
+  }
+
+  function calculateExpression(expr) {
+    // Replace % with /100 for percentage calculation
+    expr = expr.replace(/%/g, '/100');
+    try {
+      // Use Function constructor instead of eval for safety
+      let result = new Function('return ' + expr)();
+      if (typeof result === 'number' && !Number.isNaN(result) && Number.isFinite(result)) {
+        return Math.round(result * 1e10) / 1e10; // Limit decimals
+      } else {
+        return 'Error';
+      }
+    } catch {
+      return 'Error';
+    }
+  }
+
+  function inputValue(value) {
+    if (value === 'AC') {
+      currentInput = '0';
+    } else if (value === 'DEL') {
+      if (currentInput.length > 1) {
+        currentInput = currentInput.slice(0, -1);
+      } else {
+        currentInput = '0';
+      }
+    } else if (value === '=') {
+      if (!lastCharIsOperator()) {
+        let result = calculateExpression(currentInput);
+        if (result !== 'Error') {
+          calculationHistory.push(currentInput + ' = ' + result);
+          if (calculationHistory.length > maxHistory) calculationHistory.shift();
+          updateHistory();
+          currentInput = result.toString();
+        } else {
+          currentInput = 'Error';
+        }
+      }
+    } else {
+      if (currentInput === '0' && !isOperator(value) && value !== '.') {
+        currentInput = value;
+      } else if (isOperator(value)) {
+        if (!lastCharIsOperator()) {
+          currentInput += value;
+        }
+      } else if (value === '.') {
+        // prevent multiple decimal points in current number
+        let parts = currentInput.split(/[\+\-\*\/]/);
+        let lastPart = parts[parts.length -1];
+        if (!lastPart.includes('.')) {
+          currentInput += value;
+        }
+      } else {
+        currentInput += value;
+      }
+    }
+    updateDisplay();
+  }
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      inputValue(button.dataset.value);
+    });
+  });
+
+  themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+  });
+
+  updateDisplay();
+  updateHistory();
+</script>
+</body>
+</html>
