@@ -1,6 +1,6 @@
 *{
     text-align: center;
-    color:(#af95e2);
+    color:lab(2.8% 0.27 0.09);
     font-weight: 600;
 }
 ol li{
@@ -21,8 +21,13 @@ caption{
 body{
      background-color:rgba(248, 242, 242, 0.5);
     background-image: url(photoo.jpg);
-    background-size:contain;
+    background-size:cover;
+    background-repeat: no-repeat;
     background-position:center;
-    background-attachment: fixed;
     background-blend-mode:screen;
+}
+@media (min-width:769px){
+    body{
+        background-attachment: fixed;
+    }
 }
